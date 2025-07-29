@@ -1,90 +1,99 @@
 # 📬 Webhook Logger
 
-A simple Node.js application that captures incoming webhooks, logs the complete request/response details, and exposes a public URL using `ngrok`. Ideal for testing platforms like **Juspay**, **Razorpay**, **Stripe**, etc.
+A simple Node.js application that captures incoming webhooks, logs the complete request/response details, and exposes a public URL using **Cloudflare Tunnel**. Perfect for testing platforms like **Juspay**, **Razorpay**, **Stripe**, and others in your local development environment.
 
 ---
 
 ## 🚀 Features
 
-- Logs:
+- ✅ Logs complete request and response:
   - Request headers & body
   - Response headers & body
-  - URL, method, and timestamp
-- Outputs all webhook data to `webhook_logs.txt`
-- Easily testable via ngrok tunnel
+  - HTTP method, URL, and timestamp
+- 📦 Logs are persisted in `webhook_logs.txt`
+- 🌐 Instantly share local server via Cloudflare Tunnel (no account required)
+- 🔄 Optional live-reload using `nodemon`
 
 ---
 
 ## 📁 Project Structure
 
 ```
+
 webhook-logger/
-├── server.js              # Main webhook server
-├── webhook_logs.txt       # Webhook logs
-├── package.json
+├── server.js             # Main Express server that handles webhooks
+├── webhook\_logs.txt      # Output log file for captured webhooks
+├── package.json          # Project dependencies and scripts
 ├── package-lock.json
-└── node_modules/
-```
+└── node\_modules/
+
+````
 
 ---
 
 ## 🛠 Setup Instructions
 
-### 1. Clone / Download
+### 1️⃣ Clone or Download the Repo
+
+```bash
+git clone https://github.com/your-username/webhook-logger.git
+cd webhook-logger
+````
+
+Or if you already have the code:
 
 ```bash
 cd /your/project/path
 ```
 
-### 2. Install Dependencies
+### 2️⃣ Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Start the Webhook Server
+### 3️⃣ Start the Webhook Server
 
 ```bash
 npm start
 ```
 
-> Server will run on `http://localhost:3000/webhook`
+> This runs the server at:
+> `http://localhost:3000/webhook`
 
 ---
 
-## 🌍 Expose Locally via Ngrok
+## 🌍 Expose Webhook Using Cloudflare Tunnel
 
-### 1. Install ngrok (if not already)
+### ✅ Step 1: Install `cloudflared`
 
-```bash
-brew install --cask ngrok
-```
-
-### 2. Authenticate ngrok (first-time only)
+If you're on macOS with Homebrew:
 
 ```bash
-ngrok config add-authtoken <your_token>
+brew install cloudflared
 ```
 
-> Get your token from https://dashboard.ngrok.com/get-started/your-authtoken
+Or download from: [https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install)
 
-### 3. Start ngrok Tunnel
+### ✅ Step 2: Start a Public Tunnel
 
 ```bash
-ngrok http 3000
+cloudflared tunnel --url http://localhost:3000
 ```
 
-You’ll get a public URL like:
+After a few seconds, you’ll see output like:
 
 ```
-https://abcd1234.ngrok-free.app/webhook
+https://your-random-subdomain.trycloudflare.com
 ```
 
-Use this in **Juspay** or any external service to test webhooks.
+> Use `https://your-random-subdomain.trycloudflare.com/webhook` as the webhook URL in **Juspay**, **Stripe**, or any external service.
 
 ---
 
-## 📂 Webhook Logs Format (`webhook_logs.txt`)
+## 📂 Webhook Logs Format
+
+Logs are written into `webhook_logs.txt` in the following format:
 
 ```json
 {
@@ -101,24 +110,61 @@ Use this in **Juspay** or any external service to test webhooks.
 
 ---
 
-## 🔧 Scripts
+## 🔧 Available Scripts
 
 ```bash
-npm start        # Starts the webhook server
-npm run dev      # (Optional) Use with nodemon for live reload (after installing nodemon)
+npm start        # Start server (production mode)
+npm run dev      # Start with live-reload (requires nodemon)
+```
+
+> To install `nodemon` globally:
+
+```bash
+npm install -g nodemon
 ```
 
 ---
 
-## 📌 Notes
+## 🧪 Test Locally
 
-- Only `POST` requests are handled (used by most webhook services)
-- All logs are appended to `webhook_logs.txt` for persistent capture
-- Make sure your local server is running when ngrok is active
+### Using curl:
+
+```bash
+curl -X POST https://your-public-url.trycloudflare.com/webhook \
+  -H "Content-Type: application/json" \
+  -d '{"event":"test.event","message":"Hello from CLI"}'
+```
+
+### You should see:
+
+```bash
+Webhook received successfully
+```
+
+And an entry in `webhook_logs.txt`.
+
+---
+
+## ⚠️ Notes
+
+* Only `POST` requests are supported (as most webhooks use POST)
+* Every Cloudflare tunnel generates a **new random URL** unless configured via a named tunnel
+* Server must be **actively running** to receive requests
+
+---
+
+## 🐞 Debugging Tips
+
+* Confirm the server is running: `http://localhost:3000/webhook`
+* Use the CLI output of `cloudflared` to get the tunnel status
+* Check `webhook_logs.txt` for every incoming request
+* Use `console.log()` in `server.js` for extra debugging if needed
 
 ---
 
 ## 🙌 Credits
 
-Built with ❤️ by **Sarish RV**  
-Feel free to extend or contribute!
+Built with ❤️ by **Sarish RV**
+
+> Contributions welcome!
+> Feel free to extend or modify this for your custom webhook workflows.
