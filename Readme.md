@@ -160,7 +160,7 @@ And an entry in `webhook_logs.txt`.
 * Check `webhook_logs.txt` for every incoming request
 * Use `console.log()` in `server.js` for extra debugging if needed
 
-Imoportant thing if you were using this endpoint in a portal or website add the url in the terminal you got and /webhook to it. Eg : https://comments-pit-raid.trycloudflare.com/webhook
+Important thing if you were using this endpoint in a portal or website add the url in the terminal you got and /webhook to it. Eg : https://comments-pit-raid.trycloudflare.com/webhook
 ---
 
 ## 🙌 Credits
